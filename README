@@ -1,0 +1,4 @@
+Plugin to add raid controller data to ohai
+currently supports raid LSI controller using megaraid
+
+Modify the constant in raid_controllers_lsi.rb to point to your copy of megaraid cli.
