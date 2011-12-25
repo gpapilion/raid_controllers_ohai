@@ -2,12 +2,15 @@ require_plugin "raid_controllers"
 
 LSI_RAID_UTIL = "/usr/local/bin/MegaCli64"
 
+if not File.exists?(LSI_RAID_UTIL)
+   return 0
+end
+
 lsi_num = 0
 raid_controllers.keys.each do
    |controller_number| 
 
    if raid_controllers[controller_number][:type] =~ /^LSI/
-      raid_controllers[controller_number][:volumes] =  Mash.new  
       raid_vl_output = %x[#{LSI_RAID_UTIL} -LdPdInfo -a#{lsi_num}] 
       raid_controller = Hash.new()
 
@@ -20,8 +23,9 @@ raid_controllers.keys.each do
       raid_vl_output.each_line do
          |line| 
 
-         if line =~ /^Number of Virtual Disks:/
+         if line =~ /^Number of Virtual Disks: [1-9]/
             number_of_vdisks = line.split(": ")[1].to_i
+            raid_controllers[controller_number][:volumes] =  Mash.new  
          end
 
          if line =~ /^\n$/
